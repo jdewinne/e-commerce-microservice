@@ -1,0 +1,27 @@
+# Provision AWS EKS cluster
+apiVersion: xl-deploy/v1
+kind: Infrastructure
+spec:
+- name: iadbeks
+  type: core.Directory
+  children:
+  - name: aws-iadbeks
+    type: aws.Cloud
+    accesskey: !value AWSAccessKey
+    accessSecret: !value AWSAccessSecret
+    children:
+    - name: eks-cloudformation
+      type: aws.cloudformation.Stack
+      region: us-west-2
+---
+apiVersion: xl-deploy/v1
+kind: Environments
+spec:
+- name: iadbeks
+  type: core.Directory
+  children:
+  - name: aws-cloudformation-iadbeks
+    type: udm.Environment
+    members:
+    - Infrastructure/iadbeks/aws-iadbeks
+    - Infrastructure/iadbeks/aws-iadbeks/eks-cloudformation
